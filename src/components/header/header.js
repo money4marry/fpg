@@ -2,15 +2,42 @@ import { Menu } from "antd";
 import "./header.scss";
 import { useLocation, Link } from "react-router-dom";
 
-const items = [
-  { label: <Link to="/">fp1</Link>, key: "fp" },
-  { label: <Link to="/articles">fp2</Link>, key: "fp2" },
-];
-
 function Header() {
+  let defaultSelected = "";
   const location = useLocation();
-  console.log(location);
-  return <Menu mode="horizontal" items={items} defaultSelectedKeys={["fp"]} />;
+  switch (location.pathname) {
+    case "/": {
+      defaultSelected = "fp";
+      break;
+    }
+    case "/articles": {
+      defaultSelected = "fp2";
+      break;
+    }
+    default:
+      break;
+  }
+  const items = [
+    {
+      label: <Link to="/">fp1</Link>,
+      key: "fp",
+    },
+    {
+      label: <Link to="/articles">fp2</Link>,
+      key: "fp2",
+    },
+    {
+      label: <Link to="/grid">GRID Trade</Link>,
+      key: "grid",
+    },
+  ];
+  return (
+    <Menu
+      mode="horizontal"
+      items={items}
+      defaultSelectedKeys={[defaultSelected]}
+    />
+  );
 }
 
 export default Header;

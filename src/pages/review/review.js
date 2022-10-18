@@ -1,9 +1,15 @@
+import { DatePicker } from "antd";
 
+const onChange = (date, dateString) => {
+  console.log(date, dateString);
+};
 
 function Review() {
-    return (
-        <div>test1</div>
-    )
+  return (
+    <div>
+      <DatePicker onChange={onChange} />
+    </div>
+  );
 }
 
-export default Review
+export default Review;

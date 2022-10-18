@@ -6,6 +6,10 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import zhCN from "antd/lib/locale/zh_CN";
 import { ConfigProvider } from "antd";
+import 'moment/locale/zh-cn';
+import moment from 'moment';
+
+moment.locale('zh-cn');
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
