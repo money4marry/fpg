@@ -1,7 +1,7 @@
 
 function Articles() {
     return (
-        <div>articles</div>
+        <div>articless2</div>
     )
 }
 
