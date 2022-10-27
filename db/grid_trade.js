@@ -12,7 +12,9 @@ const GridTrade = dbInstance.define('GridTrade', {
   },
   price: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+  },
+  state: {
+    type: DataTypes.STRING,
   },
 })
 
@@ -20,7 +22,7 @@ async function create(obj) {
   await dbInstance.sync()
   try {
     const gt = await GridTrade.create(obj)
-    console.log('gt创建成功', gt)
+    console.log('gt创建成功')
   } catch (err) {
     console.error(err)
   }
@@ -30,15 +32,22 @@ async function query() {
   await dbInstance.sync()
   try {
     const gts = await GridTrade.findAll()
-    console.log('gt查询成功', gts)
+    console.log('gt查询成功', gts.length)
+    return JSON.parse(JSON.stringify(gts, null, 2))
   } catch (err) {
     console.error(err)
   }
 }
 
 async function exec(params) {
-  console.log('查询参数', params)
-  query()
+  switch (params.method) {
+    case 'add':
+      return await create(params.params)
+    case 'query':
+      return await query(params.params)
+    default:
+      break
+  }
 }
 
 GridTrade.exec = exec

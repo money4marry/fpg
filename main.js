@@ -12,8 +12,8 @@ function createWindow() {
     },
   })
 
-  ipcMain.on('GridTrade', (event, data) => {
-    GridTrade.exec(data)
+  ipcMain.handle('GridTrade', (event, data) => {
+    return GridTrade.exec(data)
   })
 
   mainWindow.loadURL('http://localhost:3000')

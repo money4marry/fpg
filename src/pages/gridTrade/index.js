@@ -1,11 +1,13 @@
 // 网格交易
-import { Table, Space, Button, Modal } from 'antd'
+import { Table, Space, Button } from 'antd'
 import { BetaSchemaForm } from '@ant-design/pro-components'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { statusEnum } from './const'
 
 const columns = [
-  { title: '名称', dataIndex: 'name', key: 'name' },
-  { title: '盈亏', dataIndex: 'age', key: 'age' },
+  { title: '名称', dataIndex: 'stock_chi_name', key: 'stock_chi_name' },
+  { title: '代码', dataIndex: 'symbol', key: 'symbol' },
+  { title: '状态', dataIndex: 'state', key: 'state' },
   { title: '更新时间', dataIndex: 'updatedAt', key: 'updatedAt' },
   {
     title: '操作',
@@ -19,12 +21,6 @@ const columns = [
     ),
   },
 ]
-let data = [
-  {
-    name: '600519',
-    age: -0.9,
-  },
-]
 
 const test = (r) => {
   window.electronAPI.GridTrade({
@@ -32,25 +28,20 @@ const test = (r) => {
     params: r,
   })
 }
-const valueEnum = {
-  all: { text: '全部', status: 'Default' },
-  open: {
-    text: '未解决',
-    status: 'Error',
-  },
-  closed: {
-    text: '已解决',
-    status: 'Success',
-    disabled: true,
-  },
-  processing: {
-    text: '解决中',
-    status: 'Processing',
-  },
+const add = (data) => {
+  const params = {
+    symbol: data.symbol,
+    stock_chi_name: data.title,
+    state: data.state,
+  }
+  window.electronAPI.GridTrade({
+    method: 'add',
+    params,
+  })
 }
 const formItem = [
   {
-    title: '标题',
+    title: '名称',
     dataIndex: 'title',
     formItemProps: {
       rules: [
@@ -60,58 +51,43 @@ const formItem = [
         },
       ],
     },
-    width: 'md',
-    colProps: {
-      xs: 24,
-      md: 12,
-    },
-    initialValue: '默认值',
-    convertValue: (value) => {
-      return `标题：${value}`
-    },
-    transform: (value) => {
-      return {
-        title: `${value}-转换`,
-      }
+  },
+  {
+    title: '代码',
+    dataIndex: 'symbol',
+    formItemProps: {
+      rules: [
+        {
+          required: true,
+          message: '此项为必填项',
+        },
+      ],
     },
   },
   {
     title: '状态',
     dataIndex: 'state',
     valueType: 'select',
-    valueEnum,
-    width: 'md',
-    colProps: {
-      xs: 24,
-      md: 12,
-    },
+    valueEnum: statusEnum,
   },
 ]
 
 const GridTrade = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const showModal = () => {
-    setIsModalOpen(true)
-  }
-  const handleOk = () => {
-    setIsModalOpen(false)
-  }
-  const handleCancel = () => {
-    setIsModalOpen(false)
-  }
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    async function temp() {
+      const s = await window.electronAPI.GridTrade({
+        method: 'query',
+      })
+      setData(s)
+    }
+    temp()
+  }, [])
   return (
     <>
-      <Modal title="Basic Modal" visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-      </Modal>
       <BetaSchemaForm
-        trigger={
-          <Button type="primary" onClick={showModal}>
-            新增
-          </Button>
-        }
+        trigger={<Button type="primary">新增</Button>}
         layoutType="ModalForm"
         steps={[
           {
@@ -126,7 +102,8 @@ const GridTrade = () => {
         }}
         grid={true}
         onFinish={async (values) => {
-          console.log(values)
+          add(values)
+          return true
         }}
         columns={formItem}
       />
